@@ -1,0 +1,19 @@
+{
+  "BAN_SUCCESS": "[!] Игрок {target} был забанен модератором {moderator}. Причина: {reason}",
+  "BAN_SUCCESS_AUTO": "[!] Автоматическая защита временно заблокировала {target} на {duration} по причине: {reason}",
+  "BAN_FAIL_SELF": "Вы не можете забанить себя.",
+  "BAN_FAIL_BOT": "Вы не можете забанить бота.",
+  "BAN_FAIL_IMMUNE": "Игрок {target} имеет иммунитет к наказаниям.",
+  "UNBAN_SUCCESS": "[!] Игрок {target} был разбанен модератором {moderator}.",
+  "UNBAN_FAIL_NOT_BANNED": "Игрок {target} не находится в черном списке.",
+  "WARN_SUCCESS": "[!] Модератор {moderator} выдал предупреждение игроку {target}. Причина: {reason} ({newWarns}/{warnsToBan} Предупреждений)",
+  "WARN_SUCCESS_AUTO": "[!] Автоматическая защита выдала предупреждение игроку {target}. ({newWarns}/{warnsToBan} Предупреждений)",
+  "WARN_RESET_AUTO": "[!] Предупреждения для игрока {username} были сброшены по истечении времени.",
+  "WARN_FAIL_SELF": "Вы не можете выдать варн себе.",
+  "WARN_FAIL_BOT": "Вы не можете выдать варн боту.",
+  "WARN_FAIL_IMMUNE": "Игрок {target} имеет иммунитет к наказаниям.",
+  "UNWARN_SUCCESS": "[!] Модератор {moderator} снял все предупреждения с игрока {target}.",
+  "UNWARN_FAIL_NO_WARNS": "У игрока {target} нет предупреждений.",
+  "SPAM_ACTION_WARN_REASON": "Спам в чате",
+  "BAN_BY_WARNS_REASON": "Превышение лимита предупреждений"
+}
