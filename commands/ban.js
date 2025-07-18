@@ -8,7 +8,7 @@ function format(template, values = {}) {
     return Object.entries(values).reduce((acc, [key, value]) => acc.replace(new RegExp(`{${key}}`, 'g'), value), template);
 }
 
-module.exports = (Command, actionHandler, messages, throttledSendMessage) => {
+module.exports = (Command, actionHandler, messages, throttledSendMessage, immunitySet) => {
     return class BanCommand extends Command {
         constructor() {
             super({
@@ -29,6 +29,7 @@ module.exports = (Command, actionHandler, messages, throttledSendMessage) => {
                 ],
                 allowedChatTypes: ['clan', 'private'],
             });
+            this.immunitySet = immunitySet;
         }
 
         async handler(bot, typeChat, user, {
@@ -42,7 +43,7 @@ module.exports = (Command, actionHandler, messages, throttledSendMessage) => {
                 return this.onInsufficientPermissions(bot, typeChat, user);
             }
 
-            if (bot.pluginData.autoModeration.immunitySet.has(игрок.toLowerCase())) return;
+            if (this.immunitySet.has(игрок.toLowerCase())) return;
 
             if (игрок.toLowerCase() === user.username.toLowerCase()) {
                 return throttledSendMessage(typeChat, format(messages.BAN_FAIL_SELF), user.username);

@@ -15,5 +15,6 @@
   "UNWARN_SUCCESS": "[!] Модератор {moderator} снял все предупреждения с игрока {target}.",
   "UNWARN_FAIL_NO_WARNS": "У игрока {target} нет предупреждений.",
   "SPAM_ACTION_WARN_REASON": "Спам в чате",
-  "BAN_BY_WARNS_REASON": "Превышение лимита предупреждений"
+  "BAN_BY_WARNS_REASON": "Превышение лимита предупреждений",
+  "HISTORY_FAIL_NO_RECORDS": "У игрока {target} нет записей о нарушениях."
 }
