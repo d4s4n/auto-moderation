@@ -1,0 +1,40 @@
+name: Update Official Plugins List
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  update-list:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout official-plugins-list repository
+        uses: actions/checkout@v3
+        with:
+          repository: blockmineJS/official-plugins-list
+          token: ${{ secrets.PAT }}
+
+      - name: Update plugin version
+        run: |
+          PLUGIN_ID="${{ github.repository }}"
+          PLUGIN_ID=${PLUGIN_ID#*/}
+
+          NEW_TAG="${{ github.event.release.tag_name }}"
+
+          sudo apt-get install -y jq
+
+          jq --arg id "$PLUGIN_ID" --arg tag "$NEW_TAG" '(.[] | select(.id == $id) | .latestTag) |= $tag' index.json > tmp.json && mv tmp.json index.json
+
+          echo "Updated $PLUGIN_ID to version $NEW_TAG"
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add index.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update ${{ github.repository }} to version ${{ github.event.release.tag_name }}"
+            git push
+          fi
