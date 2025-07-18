@@ -8,7 +8,7 @@ function format(template, values = {}) {
     return Object.entries(values).reduce((acc, [key, value]) => acc.replace(new RegExp(`{${key}}`, 'g'), value), template);
 }
 
-module.exports = (Command, messages, throttledSendMessage) => {
+module.exports = (Command, messages, throttledSendMessage, dataManager) => {
     return class UnwarnCommand extends Command {
         constructor() {
             super({
@@ -23,6 +23,8 @@ module.exports = (Command, messages, throttledSendMessage) => {
                 }],
                 allowedChatTypes: ['clan', 'private'],
             });
+            this.getPlayerData = dataManager.getPlayerData;
+            this.updatePlayerData = dataManager.updatePlayerData;
         }
 
         async handler(bot, typeChat, user, {
@@ -35,14 +37,21 @@ module.exports = (Command, messages, throttledSendMessage) => {
                 return this.onInsufficientPermissions(bot, typeChat, user);
             }
 
-            const warnMap = bot.pluginData.autoModeration.warns;
-            const targetLower = игрок.toLowerCase();
-            if (!warnMap.has(targetLower) || warnMap.get(targetLower)?.count === 0) {
+            const playerData = this.getPlayerData(игрок);
+            if (!playerData.warns || playerData.warns === 0) {
                 return throttledSendMessage(typeChat, format(messages.UNWARN_FAIL_NO_WARNS, {
                     target: игрок
                 }), user.username);
             }
-            warnMap.delete(targetLower);
+
+            playerData.warns = 0;
+            playerData.warnTimestamp = null;
+            await this.updatePlayerData(игрок, playerData);
+            
+            const currentUiState = bot.pluginUiState.get('auto-moderation') || { violators: [] };
+            const updatedViolators = currentUiState.violators.filter(v => v.username !== игрок);
+            bot.api.sendUiUpdate('auto-moderation', { violators: updatedViolators });
+            
             throttledSendMessage('clan', format(messages.UNWARN_SUCCESS, {
                 target: игрок,
                 moderator: user.username

@@ -8,7 +8,7 @@ function format(template, values = {}) {
     return Object.entries(values).reduce((acc, [key, value]) => acc.replace(new RegExp(`{${key}}`, 'g'), value), template);
 }
 
-module.exports = (Command, messages, throttledSendMessage) => {
+module.exports = (Command, messages, throttledSendMessage, dataManager) => {
     return class UnbanCommand extends Command {
         constructor() {
             super({
@@ -23,6 +23,8 @@ module.exports = (Command, messages, throttledSendMessage) => {
                 }],
                 allowedChatTypes: ['clan', 'private'],
             });
+            this.getPlayerData = dataManager.getPlayerData;
+            this.updatePlayerData = dataManager.updatePlayerData;
         }
 
         async handler(bot, typeChat, user, {
@@ -36,12 +38,27 @@ module.exports = (Command, messages, throttledSendMessage) => {
             }
 
             const targetUser = await bot.api.getUser(игрок);
-            if (!targetUser || !targetUser.isBlacklisted) {
+            const playerData = this.getPlayerData(игрок);
+
+            if ((!targetUser || !targetUser.isBlacklisted) && !playerData.banInfo) {
                 return throttledSendMessage(typeChat, format(messages.UNBAN_FAIL_NOT_BANNED, {
                     target: игрок
                 }), user.username);
             }
-            await targetUser.setBlacklist(false);
+
+            if (targetUser && targetUser.isBlacklisted) {
+                await targetUser.setBlacklist(false);
+            }
+            
+            if (playerData.banInfo) {
+                playerData.banInfo = null;
+                await this.updatePlayerData(игрок, playerData);
+            }
+            
+            const currentUiState = bot.pluginUiState.get('auto-moderation') || { violators: [] };
+            const updatedViolators = currentUiState.violators.filter(v => v.username !== игрок);
+            bot.api.sendUiUpdate('auto-moderation', { violators: updatedViolators });
+
             throttledSendMessage('clan', format(messages.UNBAN_SUCCESS, {
                 target: игрок,
                 moderator: user.username

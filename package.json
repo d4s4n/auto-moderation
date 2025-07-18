@@ -1,6 +1,6 @@
 {
   "name": "auto-moderation",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "description": "Система модерации: защита от спама, предупреждения и баны.",
   "main": "index.js",
   "author": "I_Sahorok",
@@ -38,7 +38,49 @@
         "label": "Включить защиту от ссылок",
         "default": true
       },
-      "warnsToBan": {
+      "violationLimit": {
+        "type": "number",
+        "label": "Лимит нарушений для кика",
+        "description": "Количество нарушений, после которого игрок будет кикнут.",
+        "default": 3
+      },
+      "warningThreshold": {
+        "type": "number",
+        "label": "Порог для предупреждений",
+        "description": "Количество нарушений, после которого бот начнет отправлять предупреждения.",
+        "default": 1
+      },
+      "violationResetMinutes": {
+        "type": "number",
+        "label": "Время сброса нарушений (минуты)",
+        "description": "Через сколько минут после последнего нарушения обнулятся страйки.",
+        "default": 10
+      },
+      "trivialMessageLimit": {
+        "type": "number",
+        "label": "Лимит бессмысленных сообщений",
+        "description": "Лимит на количество простых сообщений (аааааа или лоллол).",
+        "default": 4
+      },
+      "similarityThreshold": {
+        "type": "number",
+        "label": "Порог для похожих сообщений",
+        "description": "Количество пар похожих сообщений, которое вызовет нарушение.",
+        "default": 4
+      },
+      "consecutiveConsonantsLimit": {
+        "type": "number",
+        "label": "Лимит идущих подряд согласных",
+        "description": "Максимальное количество идущих подряд согласных букв в слове.",
+        "default": 7
+      },
+      "gibberishMinLength": {
+        "type": "number",
+        "label": "Мин. длина для проверки на бессмыслицу",
+        "description": "Сообщения короче этой длины не будут проверяться на бессмысленный набор символов.",
+        "default": 10
+      },
+       "warnsToBan": {
         "type": "number",
         "label": "Количество предупреждений для бана",
         "description": "При каком количестве варнов игрок будет автоматически забанен.",
@@ -49,13 +91,16 @@
         "label": "Длительность авто-бана (минуты)",
         "description": "На сколько минут будет забанен игрок после получения максимального кол-ва варнов.",
         "default": 60
-      },
-      "warnResetMinutes": {
-        "type": "number",
-        "label": "Время сброса варнов (минуты)",
-        "description": "Через сколько минут после последнего выданного предупреждения будут сняты все варны.",
-        "default": 30
       }
-    }
+    },
+    "uiExtensions": [
+        {
+            "type": "tab",
+            "id": "auto-moderation-dashboard",
+            "label": "Модерация",
+            "icon": "ShieldCheck",
+            "path": "dashboard"
+        }
+    ]
   }
 }
